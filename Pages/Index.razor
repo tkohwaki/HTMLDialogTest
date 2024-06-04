@@ -1,0 +1,65 @@
+﻿@page "/"
+@inject IJSRuntime JSRun
+
+<button class="btn btn-primary" @onclick="OnModal1Open">モーダル1</button>&nbsp;
+<button class="btn btn-success" onclick="Modal2.showModal()">モーダル2</button>
+<br/>
+@if (IsOK && !string.IsNullOrEmpty(UserName)) {
+    <br/>
+    <span>ユーザー名：</span><span>@UserName</span>
+}
+<br/>
+<br/>
+<dialog id="Modal1" @ref="dlg">
+    <form method="dialog">
+        <table>
+            <tr>
+                <td style="text-align:center;font-size:32px;font-weight:bold">Hello World!!</td>
+            </tr>
+            <tr>
+                <td>@NowTime</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td style="text-align:right">
+                    <button class="btn btn-primary">OK</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</dialog>
+<dialog id="Modal2" @oncancel="OnCancel">
+    <form method="dialog">
+        <table>
+            <tr>
+                <th>ユーザー名：</th>
+                <td><input type="text" @bind="UserName"/></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:right">
+                    <button class="btn btn-secondary" @onclick="OnCancel">Cancel</button>
+                    <button class="btn btn-primary" @onclick="OnOK">OK</button>&nbsp;&nbsp;
+                </td>
+            </tr>
+        </table>
+    </form>
+</dialog>
+@code {
+    protected string UserName = "";
+    protected bool IsOK = false;
+    protected string NowTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+    protected ElementReference dlg;
+    protected void OnCancel() {
+        UserName = "";
+        IsOK = false;
+    }
+    protected void OnOK() {
+        IsOK = true;
+    }
+    protected async Task OnModal1Open() {
+        NowTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+        await JSRun.InvokeVoidAsync("convinient.showModal",dlg);
+    }
+}
